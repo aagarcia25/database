@@ -753,7 +753,7 @@ P_USUARIO,
 P_USUARIO,
 VIDCALPRIN,
 tbl.IdMun,
-tbl.RESULT	
+tbl.RESULT
 FROM 				
 (		
   SELECT 
@@ -765,7 +765,7 @@ FROM
   (CASE WHEN ( cg.Garantia / 12) > ((ad.A1_5_COF / VVALORMAM ) * (VTOTAL * 0.60)) THEN
    cg.Garantia/12
     ELSE  
-   (ad.A1_5_COF / VVALORMAM ) * (VTOTAL * 0.60) 
+  ROUND( (ad.A1_5_COF / VVALORMAM ) * (VTOTAL * 0.60) )
     END)
     AS RESULT
   FROM Municipios mun
@@ -786,7 +786,10 @@ FROM
   mun.Nombre,
   cg.Garantia,
   (ad.A1_5_COF / VVALORMANM ) * (VTOTAL * 0.40),
-  (CASE WHEN ( cg.Garantia/ 12) > ((ad.A1_5_COF / VVALORMANM ) * (VTOTAL * 0.40)) THEN cg.Garantia /12 ELSE  (ad.A1_5_COF / VVALORMANM ) * (VTOTAL * 0.40)  END) AS RESULT
+  (CASE WHEN ( cg.Garantia/ 12) > ((ad.A1_5_COF / VVALORMANM ) * (VTOTAL * 0.40)) THEN 
+ cg.Garantia /12
+  ELSE 
+    ROUND(  (ad.A1_5_COF / VVALORMANM ) * (VTOTAL * 0.40) )   END) AS RESULT
   FROM Municipios mun
   INNER JOIN ArticuloDetalle ad ON mun.id = ad.IdMunicipio
   INNER JOIN PDRMYE.ArticuloPrincipal ap ON ap.id = ad.idArticuloPrincipal AND ap.deleted =0 AND ap.Clave=1

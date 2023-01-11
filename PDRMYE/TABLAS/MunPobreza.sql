@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS `MunPobreza` (
   `CreadoPor` char(36) NOT NULL DEFAULT '1',
   `Anio` int(4) NOT NULL,
   `Total` int(20) NOT NULL DEFAULT 0,
-  `CarenciaProm` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `CarenciaProm` decimal(30,20) NOT NULL DEFAULT 0.00000000000000000000,
   `IdMun` char(36) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   KEY `FK3_idMun` (`IdMun`) USING BTREE,

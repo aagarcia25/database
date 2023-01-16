@@ -13,7 +13,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 -- Volcando estructura para tabla PDRMYE.TblAjustesFondos
-DROP TABLE IF EXISTS `TblAjustesFondos`;
 CREATE TABLE IF NOT EXISTS `TblAjustesFondos` (
   `id` char(36) NOT NULL DEFAULT uuid(),
   `Mes` int(2) NOT NULL,

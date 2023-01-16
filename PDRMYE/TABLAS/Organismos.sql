@@ -13,7 +13,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 -- Volcando estructura para tabla PDRMYE.Organismos
-DROP TABLE IF EXISTS `Organismos`;
 CREATE TABLE IF NOT EXISTS `Organismos` (
   `id` char(36) NOT NULL DEFAULT uuid(),
   `deleted` binary(1) NOT NULL DEFAULT '0',
@@ -22,6 +21,19 @@ CREATE TABLE IF NOT EXISTS `Organismos` (
   `ModificadoPor` char(36) NOT NULL DEFAULT '1',
   `CreadoPor` char(36) NOT NULL DEFAULT '1',
   `Descripcion` varchar(500) NOT NULL,
+  `ClavePSIREGOB` varchar(10) NOT NULL,
+  `ClaveDSIREGOB` varchar(10) NOT NULL,
+  `Clasificador01` varchar(50) DEFAULT NULL,
+  `Clasificador02` varchar(50) DEFAULT NULL,
+  `Clasificador03` varchar(50) DEFAULT NULL,
+  `Clasificador04` varchar(50) DEFAULT NULL,
+  `Clasificador05` varchar(50) DEFAULT NULL,
+  `Clasificador06` varchar(50) DEFAULT NULL,
+  `Clasificador07` varchar(50) DEFAULT NULL,
+  `Clasificador08` varchar(50) DEFAULT NULL,
+  `Clasificador09` varchar(50) DEFAULT NULL,
+  `Clasificador10` varchar(50) DEFAULT NULL,
+  `Clasificador11` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci COMMENT='Tabla para definir los Organismos';
 

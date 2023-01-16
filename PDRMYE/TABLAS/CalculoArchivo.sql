@@ -13,7 +13,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 -- Volcando estructura para tabla PDRMYE.CalculoArchivo
-DROP TABLE IF EXISTS `CalculoArchivo`;
 CREATE TABLE IF NOT EXISTS `CalculoArchivo` (
   `id` char(36) NOT NULL DEFAULT uuid(),
   `idCalculo` char(36) NOT NULL,

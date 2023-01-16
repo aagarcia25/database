@@ -13,7 +13,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 -- Volcando estructura para tabla PDRMYE.UsuarioResponsableMunicipio
-DROP TABLE IF EXISTS `UsuarioResponsableMunicipio`;
 CREATE TABLE IF NOT EXISTS `UsuarioResponsableMunicipio` (
   `id` char(36) NOT NULL DEFAULT uuid(),
   `idUsuario` char(36) NOT NULL,

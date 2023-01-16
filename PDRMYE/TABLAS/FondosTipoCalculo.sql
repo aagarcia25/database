@@ -13,7 +13,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 -- Volcando estructura para tabla PDRMYE.FondosTipoCalculo
-DROP TABLE IF EXISTS `FondosTipoCalculo`;
 CREATE TABLE IF NOT EXISTS `FondosTipoCalculo` (
   `id` char(36) NOT NULL DEFAULT uuid(),
   `idFondo` char(36) NOT NULL,

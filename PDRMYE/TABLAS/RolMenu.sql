@@ -13,7 +13,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 -- Volcando estructura para tabla PDRMYE.RolMenu
-DROP TABLE IF EXISTS `RolMenu`;
 CREATE TABLE IF NOT EXISTS `RolMenu` (
   `id` char(36) NOT NULL DEFAULT uuid(),
   `idRol` char(36) NOT NULL DEFAULT '',

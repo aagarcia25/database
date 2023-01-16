@@ -12,25 +12,19 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
--- Volcando estructura para tabla PDRMYE.OpDetalle
-CREATE TABLE IF NOT EXISTS `OpDetalle` (
+-- Volcando estructura para tabla PDRMYE.ORGCfdi
+CREATE TABLE IF NOT EXISTS `ORGCfdi` (
   `id` char(36) NOT NULL DEFAULT uuid(),
   `deleted` binary(1) NOT NULL DEFAULT '0',
-  `UltimaActualizacion` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `UltimaActualizacion` datetime NOT NULL DEFAULT current_timestamp(),
   `FechaCreacion` datetime NOT NULL DEFAULT current_timestamp(),
   `ModificadoPor` char(36) NOT NULL DEFAULT '1',
   `CreadoPor` char(36) NOT NULL DEFAULT '1',
-  `IdOp` char(36) NOT NULL,
-  `IdMun` char(36) NOT NULL,
-  `idUResp` varchar(5) NOT NULL DEFAULT '',
-  `Total` decimal(30,2) NOT NULL,
-  `Comentario` varchar(300) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK1_OPD_idMunicipio` (`IdMun`),
-  KEY `FK2_OPD_OpCabecera` (`IdOp`),
-  CONSTRAINT `FK1_OPD_idMunicipio` FOREIGN KEY (`IdMun`) REFERENCES `Municipios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `FK2_OPD_OpCabecera` FOREIGN KEY (`IdOp`) REFERENCES `OpCabecera` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci COMMENT='tabla para guardar el detalle de la Orden de Pago';
+  `idPA` char(36) NOT NULL,
+  `Route` varchar(300) DEFAULT NULL,
+  `Nombre` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- La exportación de datos fue deseleccionada.
 

@@ -13,7 +13,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 -- Volcando estructura para tabla PDRMYE.TblAnticiposParticipacionesPrest
-DROP TABLE IF EXISTS `TblAnticiposParticipacionesPrest`;
 CREATE TABLE IF NOT EXISTS `TblAnticiposParticipacionesPrest` (
   `id` char(36) NOT NULL DEFAULT uuid(),
   `idusuario` char(36) NOT NULL,

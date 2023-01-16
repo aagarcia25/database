@@ -13,7 +13,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 -- Volcando estructura para tabla PDRMYE.Plantillas
-DROP TABLE IF EXISTS `Plantillas`;
 CREATE TABLE IF NOT EXISTS `Plantillas` (
   `id` char(36) NOT NULL DEFAULT uuid(),
   `referencia` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,

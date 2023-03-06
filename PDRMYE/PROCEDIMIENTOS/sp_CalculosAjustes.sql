@@ -1,5 +1,5 @@
 -- --------------------------------------------------------
--- Host:                         10.200.4.111
+-- Host:                         10.210.0.29
 -- Versión del servidor:         10.8.6-MariaDB - MariaDB Server
 -- SO del servidor:              Linux
 -- HeidiSQL Versión:             11.3.0.6295
@@ -13,7 +13,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 -- Volcando estructura para procedimiento PDRMYE.sp_CalculosAjustes
-DROP PROCEDURE IF EXISTS `sp_CalculosAjustes`;
 DELIMITER //
 CREATE PROCEDURE `sp_CalculosAjustes`(
 	IN `P_FONDO` VARCHAR(50),

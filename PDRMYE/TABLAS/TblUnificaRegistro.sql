@@ -1,5 +1,5 @@
 -- --------------------------------------------------------
--- Host:                         10.200.4.111
+-- Host:                         10.210.0.29
 -- Versión del servidor:         10.8.6-MariaDB - MariaDB Server
 -- SO del servidor:              Linux
 -- HeidiSQL Versión:             11.3.0.6295
@@ -13,6 +13,7 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 -- Volcando estructura para tabla PDRMYE.TblUnificaRegistro
+DROP TABLE IF EXISTS `TblUnificaRegistro`;
 CREATE TABLE IF NOT EXISTS `TblUnificaRegistro` (
   `id` char(36) NOT NULL DEFAULT uuid(),
   `idPA` char(36) NOT NULL,
@@ -23,7 +24,10 @@ CREATE TABLE IF NOT EXISTS `TblUnificaRegistro` (
   CONSTRAINT `FK2_TUR_USER` FOREIGN KEY (`idusuario`) REFERENCES `Usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci COMMENT='Tabla Temporal para la unificacion de registros';
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla PDRMYE.TblUnificaRegistro: ~0 rows (aproximadamente)
+DELETE FROM `TblUnificaRegistro`;
+/*!40000 ALTER TABLE `TblUnificaRegistro` DISABLE KEYS */;
+/*!40000 ALTER TABLE `TblUnificaRegistro` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;

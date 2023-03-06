@@ -1,5 +1,5 @@
 -- --------------------------------------------------------
--- Host:                         10.200.4.111
+-- Host:                         10.210.0.29
 -- Versión del servidor:         10.8.6-MariaDB - MariaDB Server
 -- SO del servidor:              Linux
 -- HeidiSQL Versión:             11.3.0.6295
@@ -13,6 +13,7 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 -- Volcando estructura para tabla PDRMYE.failed_jobs
+DROP TABLE IF EXISTS `failed_jobs`;
 CREATE TABLE IF NOT EXISTS `failed_jobs` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `uuid` varchar(191) NOT NULL,
@@ -25,7 +26,10 @@ CREATE TABLE IF NOT EXISTS `failed_jobs` (
   UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla PDRMYE.failed_jobs: ~0 rows (aproximadamente)
+DELETE FROM `failed_jobs`;
+/*!40000 ALTER TABLE `failed_jobs` DISABLE KEYS */;
+/*!40000 ALTER TABLE `failed_jobs` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;

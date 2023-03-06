@@ -1,5 +1,5 @@
 -- --------------------------------------------------------
--- Host:                         10.200.4.111
+-- Host:                         10.210.0.29
 -- Versión del servidor:         10.8.6-MariaDB - MariaDB Server
 -- SO del servidor:              Linux
 -- HeidiSQL Versión:             11.3.0.6295
@@ -13,6 +13,7 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 -- Volcando estructura para tabla PDRMYE.PA_DESCUENTOS
+DROP TABLE IF EXISTS `PA_DESCUENTOS`;
 CREATE TABLE IF NOT EXISTS `PA_DESCUENTOS` (
   `id` char(36) NOT NULL DEFAULT uuid(),
   `idPA` char(36) NOT NULL,
@@ -41,7 +42,10 @@ CREATE TABLE IF NOT EXISTS `PA_DESCUENTOS` (
   CONSTRAINT `FK4_PADES_PA` FOREIGN KEY (`idPA`) REFERENCES `PA` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci COMMENT='Tabla para guardar los descuentos de las participaciones';
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla PDRMYE.PA_DESCUENTOS: ~0 rows (aproximadamente)
+DELETE FROM `PA_DESCUENTOS`;
+/*!40000 ALTER TABLE `PA_DESCUENTOS` DISABLE KEYS */;
+/*!40000 ALTER TABLE `PA_DESCUENTOS` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;

@@ -1,5 +1,5 @@
 -- --------------------------------------------------------
--- Host:                         10.200.4.111
+-- Host:                         10.210.0.29
 -- Versión del servidor:         10.8.6-MariaDB - MariaDB Server
 -- SO del servidor:              Linux
 -- HeidiSQL Versión:             11.3.0.6295
@@ -13,7 +13,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 -- Volcando estructura para procedimiento PDRMYE.sp_Calculos
-DROP PROCEDURE IF EXISTS `sp_Calculos`;
 DELIMITER //
 CREATE PROCEDURE `sp_Calculos`(
 	IN `P_FONDO` VARCHAR(50),
@@ -25,7 +24,8 @@ CREATE PROCEDURE `sp_Calculos`(
 	IN `P_IEJA` DECIMAL(20,6),
 	IN `P_TIPOCALCULO` CHAR(36),
 	IN `P_IDVERSION` CHAR(36),
-	IN `P_DIST` TINYINT
+	IN `P_DIST` TINYINT,
+	IN `P_DERECHOyE` DECIMAL(20,6)
 )
 BEGIN
 
@@ -108,11 +108,15 @@ EN LOS DIFERENTES  CALCULOS DE LOS FONDOS
  DECLARE VSUMPOB INT;
  DECLARE VTOTALPARTICIPACIONES DECIMAL(30,2);
  DECLARE VTOTALIEJA DECIMAL(30,2);
+ DECLARE VTOTALDERECHO DECIMAL(30,2);
  DECLARE VLEYEGRESOS DECIMAL(30,2);
  DECLARE VSUMA1_5_COF DECIMAL(30,20);
  DECLARE VSUMA2_5_COF DECIMAL(30,20);
  DECLARE VTIPOCALCULO VARCHAR(50); 
  DECLARE VIF INT;
+ 
+ DECLARE VINFLACION DECIMAL(10,2);
+ DECLARE VCRECIMIENTO DECIMAL(10,2);
  /*
  SECCION PARA INICIALIZAR LAS VARIABLES GLOBALES A UTILIZAR 
  EN LOS DIFERENTES CALCULOS DE LOS FONDOS
@@ -122,9 +126,9 @@ EN LOS DIFERENTES  CALCULOS DE LOS FONDOS
  SELECT REFERENCIA INTO VTIPOCALCULO FROM PDRMYE.TipoFondosCalculo WHERE ID=P_TIPOCALCULO;
  SELECT YEAR(NOW()) INTO VANIO FROM DUAL;
  SELECT Diario INTO VUMA FROM PDRMYE.Umas WHERE Anio=(SELECT VALOR  FROM PDRMYE.ParametrosGenerales WHERE Nombre='UMA');
- SELECT cast(VALOR as INT)   -1  INTO VANIOGARANTIA FROM PDRMYE.ParametrosGenerales WHERE Nombre='ANIO_OPERACION';
+ SELECT cast(VALOR as INT)   INTO VANIOGARANTIA FROM PDRMYE.ParametrosGenerales WHERE Nombre='ANIO_GARANTIA';
  SELECT MONTH(NOW()) INTO VMES  FROM DUAL;
- SELECT MAX(munp.ANIO) INTO VANIO_POBLACION from PDRMYE.MunPoblacion  munp ;
+ SELECT VALOR INTO VANIO_POBLACION FROM PDRMYE.ParametrosGenerales WHERE Nombre='PO';
  SELECT ID INTO VIDFONDO FROM PDRMYE.Fondos WHERE CLAVE=P_FONDO;
  SELECT ID INTO VIDESTATUS FROM PDRMYE.Estatus WHERE DESCRIPCION='INICIO' AND Proceso='6fbbcf10-4b39-11ed-a964-040300000000' ;
  SELECT UUID() INTO VIDCALPRIN FROM DUAL;
@@ -133,6 +137,9 @@ EN LOS DIFERENTES  CALCULOS DE LOS FONDOS
  SELECT ap.id INTO ARTF1 FROM PDRMYE.ArticuloPrincipal  ap WHERE ap.deleted=0 AND ap.Clave=1 ;
  SELECT ap.id INTO ARTF2 FROM PDRMYE.ArticuloPrincipal  ap WHERE ap.deleted=0 AND ap.Clave=2 ;
  SELECT ap.id INTO ARTF3 FROM PDRMYE.ArticuloPrincipal  ap WHERE ap.deleted=0 AND ap.Clave=3 ;
+ 
+ SELECT VALOR INTO VINFLACION  FROM PDRMYE.ParametrosGenerales WHERE Nombre='INFLACION';
+ SELECT VALOR INTO VCRECIMIENTO FROM PDRMYE.ParametrosGenerales WHERE Nombre='CRECIMIENTO';
  
  
  
@@ -148,7 +155,7 @@ WHERE cp.deleted=0
 AND cp.anio = P_ANIO
 AND cp.mes=   P_MES
 AND fon.Aportacion=1
-AND es.ControlInterno='DAMOP_INICIO' 
+-- AND es.ControlInterno='CPH_ENV_VAL' -- 'DAMOP_INICIO' 
 ;
  
  
@@ -226,6 +233,21 @@ WHERE ANIO=P_ANIO AND MES=P_MES;
 CALL PDRMYE.sp_ActualizaTotalCalculo(VIDCALPRIN,'Se actualiza el total del cálculo');
 TRUNCATE TABLE PDRMYE.MunRefrendos;
 
+
+ELSEIF P_FONDO = 'FOINMUN' THEN
+
+INSERT INTO PDRMYE.CalculoPrincipal(TotalCompleto,id,idEstatus,ClaveFondo,Anio,Mes,ModificadoPor,CreadoPor,Comentario,idAreaAsignado,idPerfilAsignado,idtipo,IdVersionCalculada,IdUsuarioAsignado)
+VALUES(P_IMPORTE,VIDCALPRIN,VIDESTATUS,VIDFONDO,P_ANIO,P_MES,P_USUARIO,P_USUARIO,'Inicio de Cálculo',VIDAREA ,VIDPERFIL,P_TIPOCALCULO,ARTF1,P_USUARIO);
+
+INSERT INTO PDRMYE.CalculoTotalDetalle(	CreadoPor,	ModificadoPor,	idCalculoTotal,	IdMun,	Mensual)
+SELECT P_USUARIO,P_USUARIO,VIDCALPRIN,MUN.ID,total FROM 
+PDRMYE.MunRefrendos MUNR
+INNER JOIN PDRMYE.Municipios MUN ON MUN.ID = MUNR.IdMun
+WHERE ANIO=P_ANIO AND MES=P_MES;
+ 
+CALL PDRMYE.sp_ActualizaTotalCalculo(VIDCALPRIN,'Se actualiza el total del cálculo');
+TRUNCATE TABLE PDRMYE.MunRefrendos;
+
 ELSEIF P_FONDO = 'ISN100' THEN
 
  
@@ -286,7 +308,7 @@ PDRMYE.CalculoGarantia cg
 INNER JOIN PDRMYE.Municipios mun ON mun.id = cg.idMunicipio
 INNER JOIN PDRMYE.Fondos fon ON fon.id = cg.ClaveFondo
 WHERE  fon.Clave='ISN'
-AND cg.Anio = VANIOGARANTIA
+AND cg.Anio = VANIO -1
 ;
 CALL PDRMYE.sp_ActualizaTotalCalculo(VIDCALPRIN,'Se actualiza el Total del Cálculo');
 
@@ -316,7 +338,7 @@ INSERT INTO PDRMYE.CalculoPrincipal(TotalCompleto,id,idEstatus,ClaveFondo,Anio,M
 VALUES(P_IMPORTE,VIDCALPRIN,VIDESTATUS,VIDFONDO,P_ANIO,P_MES,P_USUARIO,P_USUARIO,'Inicio de Cálculo',VIDAREA ,VIDPERFIL,P_TIPOCALCULO,ARTF1,P_USUARIO);
 
 INSERT INTO PDRMYE.CalculoTotalDetalle(	CreadoPor,	ModificadoPor,	idCalculoTotal,	IdMun,	Mensual)
-SELECT P_USUARIO,P_USUARIO,VIDCALPRIN,isai.IdMun,(isai.importe /VTOTALISAN * VTOTAL) FROM PDRMYE.MunIsai isai WHERE deleted=0;
+SELECT P_USUARIO,P_USUARIO,VIDCALPRIN,isai.IdMun,TRUNCATE((isai.importe /VTOTALISAN * VTOTAL),2) FROM PDRMYE.MunIsai isai WHERE deleted=0;
 CALL PDRMYE.sp_ActualizaTotalCalculo(VIDCALPRIN,'Se actualiza el Total del Cálculo');
 
 
@@ -341,7 +363,7 @@ INSERT INTO PDRMYE.CalculoPrincipal(TotalCompleto,id,idEstatus,ClaveFondo,Anio,M
 VALUES(P_IMPORTE,VIDCALPRIN,VIDESTATUS,VIDFONDO,P_ANIO,P_MES,P_USUARIO,P_USUARIO,'Inicio de Cálculo',VIDAREA ,VIDPERFIL,P_TIPOCALCULO,ARTF1,P_USUARIO);
 
 
-IF VTIPOCALCULO = 'MENSUAL' THEN
+IF VTIPOCALCULO = 'MENSUAL' OR  VTIPOCALCULO='FOFIR4' THEN
 
 IF  VIF = 1 THEN
 
@@ -569,13 +591,13 @@ INSERT INTO PDRMYE.CalculoTotalDetalle(CreadoPor, ModificadoPor,idCalculoTotal,I
          P_USUARIO,
          VIDCALPRIN,
          mun.id,
-         (munp.totalPob  / VSUMA1_5_COF )
+         TRUNCATE(cast(munp.totalPob as DECIMAL(20,10))   / VSUMA1_5_COF  ,18)
          * 
 			 P_IMPORTE 
           FROM PDRMYE.Municipios mun
-          INNER JOIN PDRMYE.MunPoblacion munp ON mun.id= munp.IdMun AND munp.Anio=VANIO_POBLACION;
+          INNER JOIN PDRMYE.MunPoblacion munp ON mun.id= munp.IdMun AND munp.Anio=VANIO_POBLACION AND munp.deleted=0;
         
- CALL PDRMYE.sp_ActualizaTotalCalculo(VIDCALPRIN,'Se actualiza el Total del Cálculo');
+CALL PDRMYE.sp_ActualizaTotalCalculo(VIDCALPRIN,'Se actualiza el Total del Cálculo');
        
 	
 ELSEIF P_FONDO = 'FISM' THEN
@@ -586,9 +608,11 @@ SELECT SUM(personas)       INTO VSUMFISMPERSONAS1 FROM PDRMYE.MunPobrezaExt p1 W
 
 SELECT 
 SUM((p1.CarenciaProm * p1.Personas) / VSUMFISMPERSONAS1    )
- INTO COEFICIENTE_COMPOB FROM PDRMYE.Municipios mun INNER JOIN PDRMYE.MunPobrezaExt p1 
+ INTO COEFICIENTE_COMPOB FROM PDRMYE.Municipios mun 
+ INNER JOIN PDRMYE.MunPobrezaExt p1 
 WHERE p1.Anio=(SELECT valor   FROM PDRMYE.ParametrosGenerales WHERE Nombre='FISM_POBLACION_2')
-AND mun.id = p1.IdMun; 
+AND mun.id = p1.IdMun
+; 
 
 SELECT 
 sum(p1.Personas / p2.Personas) INTO VSUMFISMPERSONAS2
@@ -614,11 +638,10 @@ INSERT INTO PDRMYE.CalculoTotalDetalle(	     CreadoPor,	     idCalculoTotal,	   
         P_USUARIO,
         VIDCALPRIN,
         mun.id,
-       
-	 ((cg.Garantia/VVALOR) + (P_IMPORTE - (VSUMFISM2013/VVALOR) ) * ((0.8* COMPOB.a ) + ( 0.2* COMEFI.a )) )  
-     
-         FROM 
-         PDRMYE.Municipios mun
+        ((cg.Garantia/VVALOR) + (P_IMPORTE - (VSUMFISM2013/VVALOR) ) * ((0.8* COMPOB.a ) + ( 0.2* COMEFI.a )) )
+
+        FROM 
+        PDRMYE.Municipios mun
          INNER JOIN PDRMYE.CalculoGarantia cg  ON cg.idMunicipio = mun.id AND cg.Anio=2013
          INNER JOIN 
           (
@@ -638,7 +661,7 @@ INSERT INTO PDRMYE.CalculoTotalDetalle(	     CreadoPor,	     idCalculoTotal,	   
             INNER JOIN PDRMYE.MunPobrezaExt p2 ON  p2.Anio=(SELECT valor   FROM PDRMYE.ParametrosGenerales WHERE Nombre='FISM_POBLACION_2')  AND mun.id = p2.IdMun  
            )COMEFI ON COMEFI.id = mun.id;           
         
-CALL PDRMYE.sp_ActualizaTotalCalculo(VIDCALPRIN,'Se actualiza el Total del Cálculo');
+ CALL PDRMYE.sp_ActualizaTotalCalculo(VIDCALPRIN,'Se actualiza el Total del Cálculo');
       
 
      
@@ -659,7 +682,7 @@ ELSEIF P_FONDO = 'FOSEGMUN' THEN
    
   SELECT (VTOTALPARTICIPACIONES * (SELECT VALOR  FROM PDRMYE.ParametrosGenerales WHERE Nombre='FOSEGMUN_%DISTRIBUCION')) / 100  into VTOTAL FROM DUAL;
   SELECT P_IEJA * (SELECT VALOR  FROM PDRMYE.ParametrosGenerales WHERE Nombre='FOSEGMUN_DISTRIBUCION_IEJA')   into VTOTALIEJA FROM DUAL;	 
-    
+  SELECT P_DERECHOyE * (SELECT VALOR  FROM PDRMYE.ParametrosGenerales WHERE Nombre='FOSEGMUN_DISTRIBUCION_DERECHO')   into VTOTALDERECHO FROM DUAL;	 
     
   -- INSERTAMOS EL CALCULO PRINCIPAL
 
@@ -681,7 +704,9 @@ SELECT
    VVALORLE +
    (VTOTAL - (VVALORLE * 51 ) )     * 0.6    * (munp.totalPob / VTOTALPOBMAM ) +
    VVALORJA +
-  (VTOTALIEJA - (VVALORJA * 51 ))  * 0.6    * (munp.totalPob / VTOTALPOBMAM ) AS a
+  (VTOTALIEJA - (VVALORJA * 51 ))  * 0.6    * (munp.totalPob / VTOTALPOBMAM ) +
+  ((VTOTALDERECHO * 0.6 )* (munp.totalPob / VTOTALPOBMAM ))
+   AS a
   FROM Municipios mun
   INNER JOIN PDRMYE.MunPoblacion munp ON  mun.id = munp.IdMun AND munp.Anio = (SELECT VALOR  FROM PDRMYE.ParametrosGenerales WHERE Nombre='FOULT_POBLACION')
   WHERE 
@@ -695,7 +720,9 @@ SELECT
   VVALORLE +
   (VTOTAL - (VVALORLE * 51 ) )     * 0.4    * (munp.totalPob / VTOTALPOBMANM ) +
   VVALORJA +
-  (VTOTALIEJA - (VVALORJA * 51 ))  * 0.4    * (munp.totalPob / VTOTALPOBMANM ) AS a
+  (VTOTALIEJA - (VVALORJA * 51 ))  * 0.4    * (munp.totalPob / VTOTALPOBMANM )+
+  ((VTOTALDERECHO * 0.4) * (munp.totalPob / VTOTALPOBMANM )) 
+  AS a
   FROM Municipios mun
   INNER JOIN PDRMYE.MunPoblacion munp ON  mun.id = munp.IdMun AND munp.Anio = (SELECT VALOR  FROM PDRMYE.ParametrosGenerales WHERE Nombre='FOULT_POBLACION')
   WHERE 
@@ -762,16 +789,16 @@ FROM
   mun.Nombre,
   cg.Garantia,
   (ad.A1_5_COF / VVALORMAM ) * (VTOTAL * 0.60), 
-  (CASE WHEN ( cg.Garantia / 12) > ((ad.A1_5_COF / VVALORMAM ) * (VTOTAL * 0.60)) THEN
+ (CASE WHEN (( cg.Garantia / 12) > ((ad.A1_5_COF / 0.84384053212125520213 ) * (40944166.23790081 * 0.60)) AND mun.ClaveEstado<>33) THEN
    cg.Garantia/12
     ELSE  
-  ROUND( (ad.A1_5_COF / VVALORMAM ) * (VTOTAL * 0.60) )
+  (ad.A1_5_COF / VVALORMAM ) * (VTOTAL * 0.60) 
     END)
     AS RESULT
   FROM Municipios mun
   INNER JOIN ArticuloDetalle ad ON mun.id = ad.IdMunicipio
   INNER JOIN PDRMYE.ArticuloPrincipal ap ON ap.id = ad.idArticuloPrincipal AND ap.deleted =0 AND ap.Clave=1
-  INNER JOIN CalculoGarantia cg ON mun.id = cg.idMunicipio  AND cg.deleted=0
+  INNER JOIN CalculoGarantia cg ON mun.id = cg.idMunicipio  AND cg.deleted=0 AND cg.Anio= P_ANIO -1 
   INNER JOIN PDRMYE.Fondos fondo ON cg.ClaveFondo = fondo.id
   WHERE 
   1=1
@@ -789,11 +816,11 @@ FROM
   (CASE WHEN ( cg.Garantia/ 12) > ((ad.A1_5_COF / VVALORMANM ) * (VTOTAL * 0.40)) THEN 
  cg.Garantia /12
   ELSE 
-    ROUND(  (ad.A1_5_COF / VVALORMANM ) * (VTOTAL * 0.40) )   END) AS RESULT
+      (ad.A1_5_COF / VVALORMANM ) * (VTOTAL * 0.40)    END) AS RESULT
   FROM Municipios mun
   INNER JOIN ArticuloDetalle ad ON mun.id = ad.IdMunicipio
   INNER JOIN PDRMYE.ArticuloPrincipal ap ON ap.id = ad.idArticuloPrincipal AND ap.deleted =0 AND ap.Clave=1
-  INNER JOIN CalculoGarantia cg ON mun.id = cg.idMunicipio   AND cg.deleted=0
+  INNER JOIN CalculoGarantia cg ON mun.id = cg.idMunicipio   AND cg.deleted=0 AND cg.Anio= P_ANIO -1
   INNER JOIN PDRMYE.Fondos fondo ON cg.ClaveFondo = fondo.id
   WHERE 
   1=1

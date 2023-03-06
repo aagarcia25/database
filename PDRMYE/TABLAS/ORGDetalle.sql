@@ -1,5 +1,5 @@
 -- --------------------------------------------------------
--- Host:                         10.200.4.111
+-- Host:                         10.210.0.29
 -- Versión del servidor:         10.8.6-MariaDB - MariaDB Server
 -- SO del servidor:              Linux
 -- HeidiSQL Versión:             11.3.0.6295
@@ -13,6 +13,7 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 -- Volcando estructura para tabla PDRMYE.ORGDetalle
+DROP TABLE IF EXISTS `ORGDetalle`;
 CREATE TABLE IF NOT EXISTS `ORGDetalle` (
   `id` char(36) NOT NULL DEFAULT uuid(),
   `deleted` binary(1) NOT NULL DEFAULT '0',
@@ -20,12 +21,28 @@ CREATE TABLE IF NOT EXISTS `ORGDetalle` (
   `FechaCreacion` datetime NOT NULL DEFAULT current_timestamp(),
   `ModificadoPor` char(36) NOT NULL DEFAULT '1',
   `CreadoPor` char(36) NOT NULL DEFAULT '1',
-  `idPA` char(36) NOT NULL,
-  `idPadre` char(36) NOT NULL,
+  `idORG` char(36) NOT NULL,
+  `Descripcion` varchar(500) NOT NULL DEFAULT '',
+  `Clasificador01` varchar(50) DEFAULT NULL,
+  `Clasificador02` varchar(50) DEFAULT NULL,
+  `Clasificador03` varchar(50) DEFAULT NULL,
+  `Clasificador04` varchar(50) DEFAULT NULL,
+  `Clasificador05` varchar(50) DEFAULT NULL,
+  `Clasificador06` varchar(50) DEFAULT NULL,
+  `Clasificador07` varchar(50) DEFAULT NULL,
+  `Clasificador08` varchar(50) DEFAULT NULL,
+  `Clasificador09` varchar(50) DEFAULT NULL,
+  `Clasificador10` varchar(50) DEFAULT NULL,
+  `Clasificador11` varchar(50) DEFAULT NULL,
+  `importe` decimal(30,2) DEFAULT NULL,
+  `ConceptoEgreso` char(36) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci COMMENT='Tabla para Detalle de organismos';
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla PDRMYE.ORGDetalle: ~0 rows (aproximadamente)
+DELETE FROM `ORGDetalle`;
+/*!40000 ALTER TABLE `ORGDetalle` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ORGDetalle` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;

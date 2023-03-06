@@ -1,5 +1,5 @@
 -- --------------------------------------------------------
--- Host:                         10.200.4.111
+-- Host:                         10.210.0.29
 -- Versión del servidor:         10.8.6-MariaDB - MariaDB Server
 -- SO del servidor:              Linux
 -- HeidiSQL Versión:             11.3.0.6295
@@ -13,7 +13,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 -- Volcando estructura para procedimiento PDRMYE.sp_DistribuirFideicomisos
-DROP PROCEDURE IF EXISTS `sp_DistribuirFideicomisos`;
 DELIMITER //
 CREATE PROCEDURE `sp_DistribuirFideicomisos`(
 	IN `P_IDREGISTRO` CHAR(36),
@@ -74,7 +73,9 @@ INSERT INTO PDRMYE.PA(
 	Uresp,
 	Clasificacion,
 	ClaveBeneficiario,
-	DescripcionBeneficiario
+	DescripcionBeneficiario,
+   Retenciones,
+   Descuentos
 	
 )
       SELECT
@@ -99,7 +100,9 @@ INSERT INTO PDRMYE.PA(
 	Uresp,
 	Clasificacion,
 	VClaveSiregob,
-	VNombre
+	VNombre,
+   Retenciones *  VPorcentaje / 100,
+   Descuentos *  VPorcentaje / 100
 	FROM PDRMYE.PA WHERE ID=P_IDREGISTRO;
 
 
@@ -114,7 +117,12 @@ CLOSE c1;
 SELECT 100 - SUM(Porcentaje)   INTO  VRESTAPORCENAJE FROM PDRMYE.MunFideicomiso MUNF WHERE MUNF.IdMun=VIDUNICIPIO;
 
 
-UPDATE PDRMYE.PA SET total = total *  VRESTAPORCENAJE / 100 ,ModificadoPor= P_USUARIO WHERE ID=P_IDREGISTRO;
+UPDATE PDRMYE.PA SET 
+total       =  total       *  VRESTAPORCENAJE / 100 ,
+Retenciones =  Retenciones *  VRESTAPORCENAJE / 100 ,
+Descuentos  =  Descuentos  *  VRESTAPORCENAJE / 100 ,
+ModificadoPor= P_USUARIO
+ WHERE ID=P_IDREGISTRO;
 
 
 

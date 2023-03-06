@@ -1,5 +1,5 @@
 -- --------------------------------------------------------
--- Host:                         10.200.4.111
+-- Host:                         10.210.0.29
 -- Versión del servidor:         10.8.6-MariaDB - MariaDB Server
 -- SO del servidor:              Linux
 -- HeidiSQL Versión:             11.3.0.6295
@@ -13,6 +13,7 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 -- Volcando estructura para tabla PDRMYE.TblAjustesFondos
+DROP TABLE IF EXISTS `TblAjustesFondos`;
 CREATE TABLE IF NOT EXISTS `TblAjustesFondos` (
   `id` char(36) NOT NULL DEFAULT uuid(),
   `Mes` int(2) NOT NULL,
@@ -33,7 +34,10 @@ CREATE TABLE IF NOT EXISTS `TblAjustesFondos` (
   CONSTRAINT `FK4_TBLAJUSTEFONDOS_CALCULO` FOREIGN KEY (`idCalculo`) REFERENCES `CalculoPrincipal` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci COMMENT='tabla de paso para guardar la informacion de los ajustes';
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla PDRMYE.TblAjustesFondos: ~0 rows (aproximadamente)
+DELETE FROM `TblAjustesFondos`;
+/*!40000 ALTER TABLE `TblAjustesFondos` DISABLE KEYS */;
+/*!40000 ALTER TABLE `TblAjustesFondos` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;

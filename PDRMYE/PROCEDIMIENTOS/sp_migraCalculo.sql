@@ -1,5 +1,5 @@
 -- --------------------------------------------------------
--- Host:                         10.200.4.111
+-- Host:                         10.210.0.29
 -- Versión del servidor:         10.8.6-MariaDB - MariaDB Server
 -- SO del servidor:              Linux
 -- HeidiSQL Versión:             11.3.0.6295
@@ -13,7 +13,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 -- Volcando estructura para procedimiento PDRMYE.sp_migraCalculo
-DROP PROCEDURE IF EXISTS `sp_migraCalculo`;
 DELIMITER //
 CREATE PROCEDURE `sp_migraCalculo`(
 	IN `P_USUARIO` CHAR(36),
@@ -190,7 +189,7 @@ SELECT
  3,
  tfc.id,
  fd.id ,
- es.id
+ 'a2d2adfc-8e12-11ed-a98c-040300000000'
 FROM CalculoPrincipal cp
 JOIN CalculoTotalDetalle ctd ON(cp.id = ctd.idCalculoTotal)
 -- JOIN Estatus es ON(es.id = cp.IdEstatus AND cp.deleted = 0)

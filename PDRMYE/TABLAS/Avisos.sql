@@ -1,5 +1,5 @@
 -- --------------------------------------------------------
--- Host:                         10.200.4.111
+-- Host:                         10.210.0.29
 -- Versión del servidor:         10.8.6-MariaDB - MariaDB Server
 -- SO del servidor:              Linux
 -- HeidiSQL Versión:             11.3.0.6295
@@ -13,6 +13,7 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 -- Volcando estructura para tabla PDRMYE.Avisos
+DROP TABLE IF EXISTS `Avisos`;
 CREATE TABLE IF NOT EXISTS `Avisos` (
   `id` char(36) NOT NULL DEFAULT uuid(),
   `deleted` binary(1) NOT NULL DEFAULT '0',
@@ -29,7 +30,10 @@ CREATE TABLE IF NOT EXISTS `Avisos` (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci COMMENT='tabla para guardar información de los avisos para municipios';
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla PDRMYE.Avisos: ~0 rows (aproximadamente)
+DELETE FROM `Avisos`;
+/*!40000 ALTER TABLE `Avisos` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Avisos` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;

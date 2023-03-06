@@ -1,5 +1,5 @@
 -- --------------------------------------------------------
--- Host:                         10.200.4.111
+-- Host:                         10.210.0.29
 -- Versión del servidor:         10.8.6-MariaDB - MariaDB Server
 -- SO del servidor:              Linux
 -- HeidiSQL Versión:             11.3.0.6295
@@ -13,6 +13,7 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 -- Volcando estructura para tabla PDRMYE.UsuarioResponsableMunicipio
+DROP TABLE IF EXISTS `UsuarioResponsableMunicipio`;
 CREATE TABLE IF NOT EXISTS `UsuarioResponsableMunicipio` (
   `id` char(36) NOT NULL DEFAULT uuid(),
   `idUsuario` char(36) NOT NULL,
@@ -27,7 +28,12 @@ CREATE TABLE IF NOT EXISTS `UsuarioResponsableMunicipio` (
   CONSTRAINT `FK3_URM_DELEGADO` FOREIGN KEY (`idUsuarioDelegado`) REFERENCES `Usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci COMMENT='relacionar usuarios responsable con su correspondiente municipio';
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla PDRMYE.UsuarioResponsableMunicipio: ~1 rows (aproximadamente)
+DELETE FROM `UsuarioResponsableMunicipio`;
+/*!40000 ALTER TABLE `UsuarioResponsableMunicipio` DISABLE KEYS */;
+INSERT INTO `UsuarioResponsableMunicipio` (`id`, `idUsuario`, `IdMuncipio`, `idUsuarioDelegado`) VALUES
+	('e6d7903e-e669-4e47-a82c-1190f3eabe53', 'e01a653e-725f-11ed-a880-040300000000', '6bb0b6b8-3f7f-11ed-af5a-040300000000', 'e01a653e-725f-11ed-a880-040300000000');
+/*!40000 ALTER TABLE `UsuarioResponsableMunicipio` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;

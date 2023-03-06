@@ -1,5 +1,5 @@
 -- --------------------------------------------------------
--- Host:                         10.200.4.111
+-- Host:                         10.210.0.29
 -- Versión del servidor:         10.8.6-MariaDB - MariaDB Server
 -- SO del servidor:              Linux
 -- HeidiSQL Versión:             11.3.0.6295
@@ -13,7 +13,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 -- Volcando estructura para procedimiento PDRMYE.sp_DAMOPGeneraAnticipos
-DROP PROCEDURE IF EXISTS `sp_DAMOPGeneraAnticipos`;
 DELIMITER //
 CREATE PROCEDURE `sp_DAMOPGeneraAnticipos`()
     COMMENT 'Procedimiento que genera los anticipos de las participaciones'
@@ -34,7 +33,8 @@ INSERT INTO PDRMYE.PA(
 	idDivisa,
 	idTipoParticipacion,
 	Observaciones,
-	ConceptoCheque
+	ConceptoCheque,
+   clasificacion
 	
 )
 
@@ -53,7 +53,8 @@ tbl.Beneficiario,
 'd7c1ea77-7049-11ed-a880-040300000000' AS idDivisa,
 '8a5e35c6-6c52-11ed-a880-040300000000' as idTipoParticipacion,
 tbl.Descripcion,
-cheque.id  AS ConceptoCheque
+cheque.id  AS ConceptoCheque,
+'OPMP'
 FROM 
 PDRMYE.TblAnticiposParticipaciones tbl
 LEFT JOIN PDRMYE.Usuarios us ON us.id = tbl.idusuario

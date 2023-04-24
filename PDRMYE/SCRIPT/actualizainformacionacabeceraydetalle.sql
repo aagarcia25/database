@@ -1,7 +1,7 @@
 
 -- SELECT * FROM PDRMYE.PA tbl WHERE tbl.idCalculoPrincipal='789cf8aa-a3f8-11ed-854b-040300000000';
 
-SET @idcalculo='eff1696d-ccae-11ed-8002-d89d6776f970';
+SET @idcalculo='';
 START TRANSACTION;
 DELETE  FROM PDRMYE.PA  WHERE idCalculoPrincipal=@idcalculo;
 

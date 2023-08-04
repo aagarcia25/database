@@ -100,7 +100,7 @@ INNER JOIN PDRMYE.Estatus es ON es.id = cp.IdEstatus
 INNER JOIN PDRMYE.Municipios mun ON mun.id = cpd.IdMun
 WHERE cp.deleted=0
 AND cp.anio = @P_ANIO
-AND fon.Clave=@P_FONDO
+AND fon.Clave=@P_FONDOnavicat
  AND cp.Mes IN (1,2,3,4,5,6)
 GROUP BY mun.Nombre
 )tbl_3 ON  tbl_3.id = mun.id

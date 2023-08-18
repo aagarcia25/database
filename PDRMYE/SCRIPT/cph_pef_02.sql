@@ -1,9 +1,9 @@
- DROP VIEW IF EXISTS cph_pef_02;
+ /*DROP VIEW IF EXISTS cph_pef_02;
 
 CREATE VIEW
-cph_pef_02 AS 
+cph_pef_02 AS */
 
-SELECT * FROM (
+SELECT  * FROM (
  SELECT 
         cp.id  idcalculototal,
         ctd.id idcalculodetalle,
@@ -37,6 +37,7 @@ SELECT * FROM (
            LEFT JOIN PDRMYE.Meses mes                 ON mes.mes = cp.Mes
            LEFT JOIN PDRMYE.PEF pefe                  ON mes.mes = cp.Mes
                                                       AND pefe.Anio = cp.Anio
+                                                      AND pefe.Mes = cp.Mes
                                                       AND pefe.ClaveFondo = cp.ClaveFondo 
                                                       AND pefe.idMunicipio = mun.id
                                             
@@ -76,8 +77,12 @@ SELECT * FROM (
            LEFT JOIN PDRMYE.Municipios mun            ON ctd.IdMun = mun.id
            LEFT JOIN PDRMYE.Meses mes                 ON mes.mes = cp.Mes
           
-           WHERE AjusteEstatal IS NOT NULL                                 
-    )tbl       
+           WHERE AjusteEstatal <> 0                                 
+    )tbl     
+	/* WHERE   tbl.Anio=2023 AND  tbl.Mes=7
+	 AND tbl.idfondo='da89175f-2b0d-11ed-afdb-040300000000'
+	 AND tbl.idmunicipio='6bbaefc2-3f7f-11ed-af5a-040300000000'
+	 */
 			  ORDER BY tbl.Anio,
            tbl.Mes asc
            

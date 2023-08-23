@@ -2,8 +2,8 @@ SET @P_ANIO =2023 ,
     @P_MES=8,
 	 @VSUMARECALCULO=0,
 	 @VANIOGARANTIA=2021,
-	 @P_FONDO='COMP ISAN',
-	 @P_IMPORTE= 18689269.00;
+	 @P_FONDO='FGP',
+	 @P_IMPORTE= -12180996.00;
 	 
 	
 
@@ -23,17 +23,53 @@ AND cal.Anio=@VANIOGARANTIA
 SELECT PorcentajeDistribucion INTO @VPORCENTAJE FROM PDRMYE.Fondos WHERE CLAVE=@P_FONDO;
 SELECT @VPORCENTAJE/100 * @P_IMPORTE INTO @VTOTAL FROM DUAL;
 
+SELECT @VTOTAL;
 SELECT  @VTOTAL + @VSUMARECALCULO INTO @VTOTAL FROM DUAL;
 
 
 
+SELECT if((@VTOTAL - @VSUMAGARANTIA)<=0,1,2) INTO VIF;
+ 
+
+SELECT @VIF;
+
+SELECT 
+@VTOTAL,
+mun.id,
+mun.Nombre,
+round(tbl_1.garantia ,2)
+FROM 
+PDRMYE.Municipios mun 
+INNER JOIN 
+(
+    SELECT 
+      mun.id,
+      mun.Nombre,
+      cal.Distribucion * @VTOTAL AS  garantia
+      FROM 
+      PDRMYE.Municipios mun
+      INNER JOIN PDRMYE.CalculoGarantia cal ON mun.id = cal.idMunicipio
+      INNER JOIN PDRMYE.Fondos fondo ON cal.ClaveFondo = fondo.id
+      WHERE fondo.Clave=@P_FONDO
+      AND cal.Anio = @VANIOGARANTIA
+)tbl_1 ON tbl_1.id = mun.id
+;
+
+
+/*
 SELECT 
 mun.id,
 mun.Nombre,
-tbl_1.garantia,
-tbl_2.total,
-round(tbl_1.garantia +tbl_2.total -ifnull(tbl_3.total,0),2),
-@VTOTAL -@VSUMAGARANTIA
+round(tbl_1.garantia - tbl_2.total),
+ifnull(tbl_3.total,0),
+
+
+round(tbl_1.garantia - tbl_2.total) -
+ifnull(tbl_3.total,0)
+
+
+
+
 FROM 
 PDRMYE.Municipios mun 
 INNER JOIN 
@@ -77,8 +113,8 @@ LEFT JOIN (
       INNER JOIN  PDRMYE.TipoFondosCalculo tfc ON cp.idtipo = tfc.id
       WHERE cp.anio=@P_ANIO
       AND   fd.Clave=@P_FONDO
-      AND   mes.mes = 12 -- @P_MES
+      AND   mes.mes =  @P_MES
       AND cp.deleted=0
       GROUP BY mun.id
       ORDER BY mun.OrdenSFTGNL asc
-)tbl_3 ON tbl_3.id = mun.id
+)tbl_3 ON tbl_3.id = mun.id*/

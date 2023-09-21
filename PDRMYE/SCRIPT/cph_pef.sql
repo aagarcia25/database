@@ -1,8 +1,9 @@
- DROP VIEW IF EXISTS `cph_pef`;
+  DROP VIEW IF EXISTS `cph_pef`;
 
 CREATE VIEW
 cph_pef AS 
  SELECT 
+ distinct
         cp.id  idcalculototal,
         ctd.id idcalculodetalle,
         cp.Anio,
@@ -33,13 +34,11 @@ cph_pef AS
 			  LEFT JOIN PDRMYE.TipoFondosCalculo ftc     ON cp.idtipo = ftc.id
            LEFT JOIN PDRMYE.Municipios mun            ON ctd.IdMun = mun.id
            LEFT JOIN PDRMYE.Meses mes                 ON mes.mes = cp.Mes
-           LEFT JOIN PDRMYE.PEF pefe                  ON mes.mes = cp.Mes
+           LEFT JOIN PDRMYE.PEF pefe                  ON pefe.mes = cp.Mes
                                                       AND pefe.Anio = cp.Anio
                                                       AND pefe.ClaveFondo = cp.ClaveFondo 
                                                       AND pefe.idMunicipio = mun.id
-                                            
-           ORDER BY cp.Anio,
+     
+	 ORDER BY cp.Anio,
            cp.Mes asc;
            
-           
-        

@@ -1,8 +1,10 @@
-DROP VIEW IF EXISTS `cph_pef`;
+/*DROP VIEW IF EXISTS `cph_pef`;
 
 CREATE VIEW
-cph_pef AS 
-SELECT * FROM (
+cph_pef AS */
+SELECT 
+*-- SUM(tbl.observadoimporte)
+ FROM (
 SELECT 
  distinct
         cp.id  idcalculototal,
@@ -21,7 +23,7 @@ SELECT
          'Devoluciones' as tipocalculo,
         TRUNCATE(AjusteEstatal,2) observadoimporte,
         0 observadoAjusteEstatal,
-		  0 observadototalImporte,
+		  TRUNCATE(AjusteEstatal,2) AS observadototalImporte,
         0 pefanio,
         0 peftotalImporte,
         0 vspefs
@@ -56,7 +58,7 @@ SELECT
         'Ajuste Estatal' as tipocalculo,
         TRUNCATE(AjusteEstatal,2) observadoimporte,
         0 observadoAjusteEstatal,
-		  0 observadototalImporte,
+		  TRUNCATE(AjusteEstatal,2) observadototalImporte,
         0 pefanio,
         0 peftotalImporte,
         0 vspefs
@@ -115,6 +117,6 @@ SELECT
                                                      
   
     )tbl
-    -- WHERE  tbl.Anio=2023 AND tbl.Mes=2 AND tbl.ClaveEstado=70 
+     WHERE  tbl.Anio=2022 AND tbl.Mes=9 AND idfondo='ef08ed38-2b0d-11ed-afdb-040300000000' 
 	 ORDER BY tbl.Anio,           tbl.Mes asc;
            

@@ -3,7 +3,9 @@ SET @P_ANIO =2023 ,
 	 @VSUMARECALCULO=0,
 	 @VANIOGARANTIA=2021,
 	 @P_FONDO='FGP',
-	 @P_IMPORTE=  -1120887278 ;
+	 @P_IMPORTE= -1120887278
+
+	  ;
 	 
 	
 SELECT 
@@ -29,7 +31,7 @@ PDRMYE.Municipios mun
 INNER JOIN PDRMYE.CalculoGarantia cal ON mun.id = cal.idMunicipio
 INNER JOIN PDRMYE.Fondos fondo ON cal.ClaveFondo = fondo.id
 WHERE fondo.Clave='FGP'
-AND cal.Anio=
+AND cal.Anio=2021
 ;
 
 SELECT @VSUMAGARANTIA ;
@@ -39,7 +41,7 @@ SELECT PorcentajeDistribucion INTO @VPORCENTAJE FROM PDRMYE.Fondos WHERE CLAVE=@
 SELECT @VPORCENTAJE/100 * @P_IMPORTE INTO @VTOTAL FROM DUAL;
 
 
-SELECT  @VTOTAL + @VSUMARECALCULO INTO @VTOTAL FROM DUAL;
+ SELECT  @VTOTAL + @VSUMARECALCULO INTO @VTOTAL FROM DUAL;
 
 
 SELECT @VTOTAL;
@@ -47,8 +49,9 @@ SELECT if((@VTOTAL - @VSUMAGARANTIA)<=0,1,2) INTO @VIF;
  
 SELECT @VIF;
 
+-- SELECT if((@VTOTAL - @VSUMAGARANTIA)<=0,1,2) INTO @VIF;
 
-  SELECT  @VTOTAL - @VSUMARECALCULO INTO @VTOTAL FROM DUAL;
+ -- SELECT  @VTOTAL + @VSUMARECALCULO INTO @VTOTAL FROM DUAL;
 
 
 
@@ -59,8 +62,8 @@ mun.id,
 mun.Nombre,
 tbl_1.Distribucion,
 @VTOTAL,
-round(tbl_1.garantia ,2),
-tbl_3.total
+round(tbl_1.garantia ,2) -tbl_3.total 
+
 FROM 
 PDRMYE.Municipios mun 
 INNER JOIN 
@@ -82,7 +85,7 @@ LEFT JOIN (
       SELECT 
       mun.id,
       mun.Nombre,
-      ifnull(SUM( cpd.Mensual + cpd.AjusteEstatal),0) total
+      ifnull(SUM( cpd.Mensual  ),0) total
       FROM 
       PDRMYE.CalculoPrincipal cp
       INNER JOIN PDRMYE.CalculoTotalDetalle cpd ON cp.id = cpd.idCalculoTotal 
@@ -110,7 +113,7 @@ tbl_1.garantia,
 tbl_2.total,
 tbl_1.garantia +tbl_2.total,
 tbl_3.total totalpagado,
-round(tbl_1.garantia +tbl_2.total - ifnull(tbl_3.total,0),2)
+round(tbl_1.garantia +tbl_2.total - ifnull(tbl_3.total,0),2) 
 FROM 
 PDRMYE.Municipios mun 
 INNER JOIN 

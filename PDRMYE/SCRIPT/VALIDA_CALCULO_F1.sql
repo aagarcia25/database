@@ -1,43 +1,66 @@
 SET @P_ANIO =2023 ,
-    @P_MES=8,
+    @P_MES=10,
 	 @VSUMARECALCULO=0,
 	 @VANIOGARANTIA=2021,
 	 @P_FONDO='FGP',
-	 @P_IMPORTE= -12180996.00;
+	 @P_IMPORTE=  -1120887278 ;
 	 
 	
+SELECT 
+ifnull(SUM( cp.Total),0) INTO @VSUMARECALCULO
+FROM 
+PDRMYE.CalculoPrincipal cp
+INNER JOIN  PDRMYE.Estatus es ON es.id = cp.IdEstatus and cp.deleted=0
+INNER JOIN  PDRMYE.Fondos fd ON fd.id = cp.ClaveFondo
+INNER JOIN  PDRMYE.Meses mes ON mes.mes = cp.Mes
+INNER JOIN  PDRMYE.Estatus esr ON esr.id = cp.IdEstatus
+INNER JOIN  PDRMYE.TipoFondosCalculo tfc ON cp.idtipo = tfc.id
+WHERE cp.anio=@P_ANIO
+AND   fd.Clave= @P_FONDO
+AND   mes.mes =@P_MES
+AND cp.deleted =0
+ORDER BY cp.FechaCreacion DESC;
 
+SELECT @VSUMARECALCULO;
 
 SELECT 
 sum(cal.Garantia) INTO @VSUMAGARANTIA FROM 
 PDRMYE.Municipios mun
 INNER JOIN PDRMYE.CalculoGarantia cal ON mun.id = cal.idMunicipio
 INNER JOIN PDRMYE.Fondos fondo ON cal.ClaveFondo = fondo.id
-WHERE fondo.Clave=@P_FONDO
-AND cal.Anio=@VANIOGARANTIA
+WHERE fondo.Clave='FGP'
+AND cal.Anio=
 ;
 
-
-
+SELECT @VSUMAGARANTIA ;
 
 SELECT PorcentajeDistribucion INTO @VPORCENTAJE FROM PDRMYE.Fondos WHERE CLAVE=@P_FONDO;
+
 SELECT @VPORCENTAJE/100 * @P_IMPORTE INTO @VTOTAL FROM DUAL;
 
-SELECT @VTOTAL;
+
 SELECT  @VTOTAL + @VSUMARECALCULO INTO @VTOTAL FROM DUAL;
 
 
-
-SELECT if((@VTOTAL - @VSUMAGARANTIA)<=0,1,2) INTO VIF;
+SELECT @VTOTAL;
+SELECT if((@VTOTAL - @VSUMAGARANTIA)<=0,1,2) INTO @VIF;
  
-
 SELECT @VIF;
 
+
+  SELECT  @VTOTAL - @VSUMARECALCULO INTO @VTOTAL FROM DUAL;
+
+
+
+
+
 SELECT 
-@VTOTAL,
 mun.id,
 mun.Nombre,
-round(tbl_1.garantia ,2)
+tbl_1.Distribucion,
+@VTOTAL,
+round(tbl_1.garantia ,2),
+tbl_3.total
 FROM 
 PDRMYE.Municipios mun 
 INNER JOIN 
@@ -45,6 +68,7 @@ INNER JOIN
     SELECT 
       mun.id,
       mun.Nombre,
+      cal.Distribucion,
       cal.Distribucion * @VTOTAL AS  garantia
       FROM 
       PDRMYE.Municipios mun
@@ -53,23 +77,40 @@ INNER JOIN
       WHERE fondo.Clave=@P_FONDO
       AND cal.Anio = @VANIOGARANTIA
 )tbl_1 ON tbl_1.id = mun.id
+
+LEFT JOIN (
+      SELECT 
+      mun.id,
+      mun.Nombre,
+      ifnull(SUM( cpd.Mensual + cpd.AjusteEstatal),0) total
+      FROM 
+      PDRMYE.CalculoPrincipal cp
+      INNER JOIN PDRMYE.CalculoTotalDetalle cpd ON cp.id = cpd.idCalculoTotal 
+      INNER JOIN PDRMYE.Municipios mun ON mun.id = cpd.IdMun
+      INNER JOIN  PDRMYE.Estatus es ON es.id = cp.IdEstatus and cp.deleted=0
+      INNER JOIN  PDRMYE.Fondos fd ON fd.id = cp.ClaveFondo
+      INNER JOIN  PDRMYE.Meses mes ON mes.mes = cp.Mes
+      INNER JOIN  PDRMYE.Estatus esr ON esr.id = cp.IdEstatus
+      INNER JOIN  PDRMYE.TipoFondosCalculo tfc ON cp.idtipo = tfc.id
+      WHERE cp.anio=@P_ANIO
+      AND   fd.Clave=@P_FONDO
+      AND   mes.mes = @P_MES
+      AND cp.deleted=0
+      GROUP BY mun.id
+      ORDER BY mun.OrdenSFTGNL asc
+)tbl_3 ON tbl_3.id = mun.id
+ORDER BY mun.OrdenSFTGNL
 ;
 
-
-/*
 SELECT 
+
 mun.id,
 mun.Nombre,
-round(tbl_1.garantia - tbl_2.total),
-ifnull(tbl_3.total,0),
-
-
-round(tbl_1.garantia - tbl_2.total) -
-ifnull(tbl_3.total,0)
-
-
-
-
+tbl_1.garantia,
+tbl_2.total,
+tbl_1.garantia +tbl_2.total,
+tbl_3.total totalpagado,
+round(tbl_1.garantia +tbl_2.total - ifnull(tbl_3.total,0),2)
 FROM 
 PDRMYE.Municipios mun 
 INNER JOIN 
@@ -78,7 +119,6 @@ SELECT
 mun.id,
 mun.Nombre,
 cal.Garantia
-
  FROM 
 PDRMYE.Municipios mun
 INNER JOIN PDRMYE.CalculoGarantia cal ON mun.id = cal.idMunicipio
@@ -91,7 +131,6 @@ INNER JOIN
 SELECT 
 ad.IdMunicipio AS id,
 ad.A1_5_COF,
-
 round(ad.A1_5_COF * ( @VTOTAL - @VSUMAGARANTIA),10) AS total
 FROM PDRMYE.ArticuloPrincipal ap
 INNER JOIN PDRMYE.ArticuloDetalle ad ON ap.id = ad.idArticuloPrincipal
@@ -101,7 +140,7 @@ LEFT JOIN (
       SELECT 
       mun.id,
       mun.Nombre,
-      ifnull(SUM( cpd.Mensual),0) total
+      ifnull(SUM( cpd.Mensual + cpd.AjusteEstatal),0) total
       FROM 
       PDRMYE.CalculoPrincipal cp
       INNER JOIN PDRMYE.CalculoTotalDetalle cpd ON cp.id = cpd.idCalculoTotal 
@@ -113,8 +152,10 @@ LEFT JOIN (
       INNER JOIN  PDRMYE.TipoFondosCalculo tfc ON cp.idtipo = tfc.id
       WHERE cp.anio=@P_ANIO
       AND   fd.Clave=@P_FONDO
-      AND   mes.mes =  @P_MES
+      AND   mes.mes = @P_MES
       AND cp.deleted=0
       GROUP BY mun.id
       ORDER BY mun.OrdenSFTGNL asc
-)tbl_3 ON tbl_3.id = mun.id*/
+)tbl_3 ON tbl_3.id = mun.id
+ORDER BY mun.OrdenSFTGNL
+;
